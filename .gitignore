@@ -1,0 +1,5 @@
+dns-router/dns_router
+dns-router/build/
+dns-router/cmake-build-*/
+.idea/
+.vscode/
