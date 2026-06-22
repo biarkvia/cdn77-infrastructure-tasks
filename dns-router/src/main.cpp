@@ -46,6 +46,7 @@ int main() {
     ok = expectRoute(router, "2402:8100:2582::/48", 215, 48) && ok;
     ok = expectRoute(router, "2001:49f0:d0b8:8a00::/56", 174, 48) && ok;
     ok = expectRoute(router, "2804:1c1c:3000:1::/64", 199, 48) && ok;
+    ok = expectMiss(router, "2001:49f0::/32") && ok;
     ok = expectMiss(router, "2001:db8::/32") && ok;
 
     if (!ok) {
