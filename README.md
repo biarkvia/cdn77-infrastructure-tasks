@@ -75,6 +75,12 @@ constant with respect to the number of stored routing records.
 Space usage is `O(n)` with respect to the number of routing records. Each stored
 prefix is represented once in the bucket for its prefix length.
 
+## Limitations
+
+- The router expects IPv6 CIDR input.
+- IPv4-mapped IPv6 addresses are not supported.
+- Invalid input throws `std::invalid_argument`.
+
 ## Build
 
 ```bash
