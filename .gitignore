@@ -1,5 +1,6 @@
 dns-router/dns_router
 dns-router/build/
 dns-router/cmake-build-*/
+bonus-lua/*.so
 .idea/
 .vscode/

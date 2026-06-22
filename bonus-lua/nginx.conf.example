@@ -1,0 +1,24 @@
+worker_processes 1;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    server {
+        listen 8080;
+
+        location /ffi {
+            content_by_lua_block {
+                local ffi = require "ffi"
+
+                ffi.cdef[[
+                int cdn77_add(int a, int b);
+                ]]
+
+                local lib = ffi.load("/mnt/d/cdn77-task/bonus-lua/libcdn77_ffi.so")
+                ngx.say(lib.cdn77_add(2, 3))
+            }
+        }
+    }
+}
