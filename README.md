@@ -1,4 +1,50 @@
-# CDN DNS routing task
+# CDN77 task
+
+This repository contains the implementation and notes for the test task:
+
+- `dns-router/` - IPv6 ECS routing lookup;
+- `NGINX_THEORY.md` - nginx proxy cache key and wildcard DNS notes;
+- `nginx-module/` - nginx C header filter adding `X-Cache-Key`;
+- `bonus-lua/` - optional LuaJIT FFI bonus.
+
+## Verification
+
+The DNS router was built and checked with:
+
+```bash
+cmake -S dns-router -B dns-router/build -DCMAKE_BUILD_TYPE=Release
+cmake --build dns-router/build
+./dns-router/build/dns_router
+```
+
+Expected output:
+
+```text
+CDN DNS router self-check OK
+```
+
+The Lua bonus shared library can be built with:
+
+```bash
+gcc -shared -fPIC -O2 bonus-lua/cdn77_ffi.c -o bonus-lua/libcdn77_ffi.so
+```
+
+`libcdn77_ffi.so` is a build artifact and is intentionally ignored by git.
+
+The nginx `X-Cache-Key` module was compile-checked as a dynamic module against
+nginx `1.28.0` source with:
+
+```bash
+./configure \
+  --with-compat \
+  --without-http_rewrite_module \
+  --without-http_gzip_module \
+  --add-dynamic-module=/path/to/cdn77-task/nginx-module
+
+make modules
+```
+
+## CDN DNS routing
 
 This repository contains a small C++ implementation of the CDN DNS routing
 lookup described in the task.
@@ -35,7 +81,7 @@ pop=174, scope=48
 
 because `/48` is the most specific matching routing prefix stored in the data.
 
-## Data structure
+### Data structure
 
 The implementation uses an array of hash maps:
 
@@ -67,7 +113,7 @@ and the response scope.
 
 The lookup checks only prefixes not longer than the ECS source prefix length.
 
-## Complexity
+### Complexity
 
 Lookup performs at most 129 hash table lookups for IPv6, therefore it is
 constant with respect to the number of stored routing records.
@@ -75,20 +121,20 @@ constant with respect to the number of stored routing records.
 Space usage is `O(n)` with respect to the number of routing records. Each stored
 prefix is represented once in the bucket for its prefix length.
 
-## Limitations
+### Limitations
 
 - The router expects IPv6 CIDR input.
 - IPv4-mapped IPv6 addresses are not supported.
 - Invalid input throws `std::invalid_argument`.
 
-## Build
+### Build
 
 ```bash
 cmake -S dns-router -B dns-router/build -DCMAKE_BUILD_TYPE=Release
 cmake --build dns-router/build
 ```
 
-## Run
+### Run
 
 ```bash
 ./dns-router/build/dns_router
@@ -105,4 +151,5 @@ The self-check loads several IPv6 routing records and verifies:
 - exact match;
 - fallback from `/56` ECS to a stored `/48` route;
 - selection of a more specific prefix;
+- no match when the ECS source prefix is shorter than the stored route prefix;
 - not found.
