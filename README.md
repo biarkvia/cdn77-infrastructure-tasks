@@ -5,7 +5,8 @@ This repository contains the implementation and notes for the test task:
 - `dns-router/` - IPv6 ECS routing lookup;
 - `NGINX_THEORY.md` - nginx proxy cache key and wildcard DNS notes;
 - `nginx-module/` - nginx C header filter adding `X-Cache-Key`;
-- `bonus-lua/` - optional LuaJIT FFI bonus.
+- `bonus-lua/` - optional LuaJIT FFI bonus;
+- `DISCUSSION.md` - reasoning, alternatives and production notes.
 
 ## Verification
 
